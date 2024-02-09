@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>Тег SCRIPT</title>
+   <link rel="stylesheet" href="./styles.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+   <script src="./main.js" defer></script>
+  </head>
+
+ <body> 
+    <form>
+
+      <div class="containerEnter"> 
+         <h1 class="textHead" text-align:center>TodoJS App</h1>
+         <input type="text" class="input-text" minlength="4"
+         maxlength="15"
+         size="10"
+         placeholder="Пиши">
+         <button class="add-button btn btn-primary" oneclick="addTask()" type="button">Add</button>
+         <br>
+         <input class="allCheckbox" type="checkbox">Check all todos
+         <br>
+      </div>
+      <br>
+      <div class="conclusionTodo">
+      <button class="Delete-button btn btn-primary" type="button" name="2">Delete completed</button>
+      <button class="All-button btn btn-primary" type="button" name="2">All Active</button>
+      <button class="counter-button btn btn-primary" type="button" name="2">All Active</button>
+      <ul class="todo">
+      </ul>
+   </div>
+   </form>
+
+
+ </body>
+</html>
