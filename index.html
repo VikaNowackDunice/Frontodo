@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
- <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <title>Тег SCRIPT</title>
-   <link rel="stylesheet" href="./styles.css">
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-   <script src="./main.js" defer></script>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>TodoList</title>
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+      />
+    <link rel="stylesheet" href="./styles.css"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="./main.js" defer></script>
   </head>
-
- <body> 
-    <form>
-
+  <body> 
       <div class="containerEnter"> 
-         <h1 class="textHead" text-align:center>TodoJS App</h1>
-         <input type="text" class="input-text" minlength="4"
-         maxlength="15"
-         size="10"
-         placeholder="Пиши">
-         <button class="add-button btn btn-primary" oneclick="addTask()" type="button">Add</button>
-         <br>
-         <input class="allCheckbox" type="checkbox">Check all todos
-         <br>
+        <h1 class="textHead" text-align:center>TodoJS App</h1>
+        <input type="text" class="input-text" size="10" placeholder="Пиши">
+        <button class="add-button btn btn-primary" oneclick="addTask()" type="button">
+          Add
+      </button>
+        <br>
+        <input class="all-checkbox" type="checkbox">
+        Check all todos
+        <br>
       </div>
       <br>
-      <div class="conclusionTodo">
-      <button class="Delete-button btn btn-primary" type="button" name="2">
-         Delete completed
+      <ul class="todo"></ul>
+      <div class="pagination"></div>
+  <div class="conclusionTodo">
+  <button class="delete-button btn btn-primary" type="button" name="2">
+      Delete completed
+  </button>
+    <div class="conditions">
+      <button class="all-button btn btn-primary " id="all" type="button" name="2">
+        All (0)
       </button>
-      <button class="All-button btn btn-primary" type="button" name="2">
-         All
+      <button class="active-button btn btn-primary" id="active"type="button" name="2"> 
+        Active (0)
       </button>
-      <button class="Active-button btn btn-primary" type="button" name="2"> Active</button>
-      <button class="Completed-button btn btn-primary" type="button" name="2"> Completed</button>
-
-      <ul class="todo">
-
-
-
-
-         
-      </ul>
+      <button class="completed-button btn btn-primary" id="completed" type="button" name="2"> 
+        Completed (0)
+      </button>
+    </div>
    </div>
-
-   </form>
-
-
  </body>
 </html>

@@ -1,31 +1,53 @@
-html{background:#c7518c}
-form {
-    text-align: center;
-margin-top: 45px;
-background:#c7518c
+body {
+  text-align: center;
+  margin-top: 45px;
+  background:#c7518c;
 }
-.textHead{
-    text-shadow:
-    2px 2px 0 rgb(230, 152, 8),
-    2px -1px 0 orange,
-    -1px 1px 0 orange,
-    -1px -1px 0 orange;
+
+.textHead {
+  text-shadow:
+  2px 2px 0 rgb(230, 152, 8),
+  2px -1px 0 orange,
+  -1px 1px 0 orange,
+  -1px -1px 0 orange;
   color: rgb(7, 7, 165);
   transition: all 1s;
 }
 
- .closebutton{
-    font-size: 15px;
-    background: rgb(163, 6, 6);
-margin-top: auto;
-display: flex; flex-direction: column;
-} 
- .todo li {
-    background: rgb(180, 132, 168);
-    margin:10px 0 0 0;
-    width: 150px;
-    height: 50px;
+.close-button{
+  position: absolute;
+  right: 10px;
+  font-size: 15px;
+  background: rgb(163, 6, 6);
+  margin-top: auto;
+  top: 10px;
+  border-radius: 5px;
 
+} 
+.todo {
+  position: relative;
+  width: 70%;
+  margin: 0 auto;
+  padding : 0px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.todo li {
+  display: flex;
+  position: relative;
+  background: rgb(207, 144, 26);
+  margin:10px 0 0 0;
+  height: 10%;
+  padding:10px;
+  border-radius: 10px;
+}
+.firstText{
+  margin-left: 10px;
+  margin-top: 10px;
+  word-break: break-all;
+  margin-right: 100px;
 }
 .containerEnter{
     text-align: center;
@@ -33,3 +55,22 @@ display: flex; flex-direction: column;
 .conclusionTodo{
     text-align: center;
 }
+
+.pagination{
+  justify-content: center;
+  margin: 10px auto; 
+  max-width: 50%;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  row-gap: 5px;
+}
+.conditions{
+  margin-top: 10px;
+}
+.active{
+  background:rgb(93, 120, 141)
+}
+
+/* .active-button{
+  background : red;
+} */
