@@ -10,8 +10,9 @@
   const pagePagination = document.querySelector('.pagination');
   const conditionsButn = document.querySelector('.conditions');
 
-  const ESCAPE = 'Escape';
+  const { _ } = window;
   const ENTER = 'Enter';
+  const ESCAPE = 'Escape';
   const COUNT_OF_PAGINATION = 5;
 
   let condition = 'all';
@@ -53,22 +54,29 @@
     completedButton.textContent = `Completed (${todoList.length - valueButton})`;
   }
 
+  function checkAllCheckbox() {
+    checkAll.checked = todoList.every((item) => item.isChecked === true);
+    if (todoList.length === 0) {
+      checkAll.checked = false;
+    }
+  }
+
   function render() {
     const configuredTodos = filterTodos()
       .slice((page - 1) * COUNT_OF_PAGINATION, page * COUNT_OF_PAGINATION);
     let htmllist = '';
     configuredTodos.forEach((item) => {
-      htmllist
-      += `<li id="${item.id}">
+      htmllist += `<li id="${item.id}">
           <input class="checkbox" type="checkbox" ${item.isChecked ? 'checked' : ''}></input>
-          <span id=${item.id} class="firstText" >${_.escape(item.text)}</span>
-          <input id=${item.id} class="new-input-redact" type="text" hidden ></input>
+          <span id=${item.id} class="firstText" >${item.text}</span>
+          <input id=${item.id} class="new-input-redact" type="text" value="${_.escape(item.text)}" hidden ></input>
           <button type="button" class="close-button">Delete</button>
       </li>`;
     });
     divTodo.innerHTML = htmllist;
-    pagination();
     updateTabsCounter();
+    checkAllCheckbox();
+    pagination();
   }
 
   function changePage(event) {
@@ -84,72 +92,23 @@
     render();
   };
 
-  function checkAllCheckbox() {
-    checkAll.checked = todoList.every((item) => item.isChecked === true);
-  }
-
   function addTask() {
     if (inputText.value.trim() !== '') {
       const task = {
         id: Date.now(),
-        text: inputText.value.trim(),
+        text: _.escape(inputText.value.trim()),
         isChecked: false,
       };
       todoList.push(task);
-      render();
-      updateTabsCounter();
+      page = Math.ceil(filterTodos().length / COUNT_OF_PAGINATION);
       inputText.value = '';
     } else {
       inputText.value = '';
     }
+    updateTabsCounter();
+    render();
     checkAllCheckbox();
-  }
-
-  function saveСhanges(event) {
-    if (event.target.textContent === '') {
-      render();
-    } else {
-      const taskId = Number(event.target.parentElement.id);
-      todoList.forEach((item) => {
-        if (item.id === taskId) {
-          item.text = event.target.parentElement.children[2].value;
-          render();
-        }
-      });
-    }
-  }
-
-  function inputEnter(eventSpan) {
-    const newInputs = document.querySelectorAll('.new-input-redact');
-    let newInput;
-    function keyPress(event) {
-      const newInputText = event.target.parentElement.children[2];
-      if (event.key === ESCAPE) {
-        newInputText.removeEventListener('blur', saveСhanges);
-        render();
-      }
-      if (event.key === ENTER && newInput.value === '') {
-        newInputText.removeEventListener('blur', saveСhanges);
-        render();
-      } else if (event.key === ENTER) {
-        if (newInputs[0].textContent === '') {
-          render();
-        }
-        newInputText.removeEventListener('blur', saveСhanges);
-        saveСhanges(event);
-        saveСhanges(eventSpan);
-      }
-    }
-    newInputs.forEach((element, id) => {
-      if (element.id === eventSpan.target.parentElement.id) {
-        newInput = newInputs[id];
-        newInput.addEventListener('keydown', keyPress); // button click handler
-      }
-    });
-    newInput.focus();
-    eventSpan.target.parentNode.children[2].addEventListener('blur', saveСhanges);
-
-    newInput.addEventListener('keydown', keyPress); // button click handler
+    pagination();
   }
 
   function checkDeleteTodoRewrite(event) {
@@ -170,14 +129,6 @@
       render();
       updateTabsCounter();
       checkAllCheckbox();
-    }
-
-    if (event.target.classList.contains('firstText') && event.detail === 2) {
-      const inputNewText = event.target.parentElement.children[2]; // span click check rewrite
-      inputNewText.hidden = false;
-      inputNewText.value = event.target.innerText; // input takes the value span
-      event.target.hidden = true;// removes the span element when opening input
-      inputEnter(event);
     }
   }
 
@@ -208,11 +159,53 @@
     }
   }
 
+  const finishEdit = (event) => {
+    if (event.sourceCapabilities !== null) {
+      let todoText = event.target.parentNode.children[2].value;
+      if (todoText.trim() === '') {
+        render();
+        return;
+      }
+      const todoId = Number(event.target.parentElement.id);
+      todoText = _.escape(todoText.trim().replace(/  +/g, ' '));
+
+      todoList.forEach((item) => {
+        if (item.id === todoId) {
+          item.text = todoText;
+        }
+      });
+      render();
+    }
+  };
+
+  const startEdit = (event) => {
+    if (event.target.classList.contains('firstText')) {
+      const { children } = event.target.parentNode;
+      children[1].hidden = true;
+      children[2].hidden = false;
+      children[2].focus();
+    }
+  };
+
+  const editOrExit = (event) => {
+    if (event.target.classList.contains('new-input-redact')) {
+      if (event.key === ENTER) {
+        finishEdit(event);
+      }
+      if (event.key === ESCAPE) {
+        render();
+      }
+    }
+  };
+
+  divTodo.addEventListener('dblclick', startEdit);
+  divTodo.addEventListener('keyup', editOrExit);
+  divTodo.addEventListener('blur', finishEdit, true);
+  divTodo.addEventListener('click', checkDeleteTodoRewrite);
   inputText.addEventListener('keypress', buttnEnter);
   addButton.addEventListener('click', addTask);
   checkAll.addEventListener('click', checkboxAll);
   deleteAllButtonBig.addEventListener('click', deleteAllButton);
-  divTodo.addEventListener('click', checkDeleteTodoRewrite);
   conditionsButn.addEventListener('click', setCondition);
   pagePagination.addEventListener('click', changePage);
 })();
