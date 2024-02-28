@@ -18,6 +18,8 @@
   let condition = 'all';
   let page = 1;
   let todoList = [];
+  let countPage = 1;
+  let lastPage = 1;
 
   const filterTodos = () => {
     switch (condition) {
@@ -31,10 +33,10 @@
   };
 
   function pagination() {
-    // display a list of pages
     let pages = '';
     const count = filterTodos().length;
-    const countPage = Math.ceil(count / COUNT_OF_PAGINATION); // number of pages
+    countPage = Math.ceil(count / COUNT_OF_PAGINATION);
+    lastPage = countPage;
     for (let i = 0; i < countPage; i += 1) {
       pages += `
       <button 
@@ -48,40 +50,50 @@
   }
 
   function updateTabsCounter() {
-    const valueButton = todoList.filter((item) => item.isChecked === false).length;
+    const completedTask = todoList.filter((item) => !item.isChecked).length;
     allButton.textContent = `All (${todoList.length})`;
     activeButton.textContent = `Active (${todoList.filter((item) => !item.isChecked).length})`;
-    completedButton.textContent = `Completed (${todoList.length - valueButton})`;
+    completedButton.textContent = `Completed (${todoList.length - completedTask})`;
   }
 
   function checkAllCheckbox() {
-    checkAll.checked = todoList.every((item) => item.isChecked === true);
+    checkAll.checked = todoList.every((item) => item.isChecked);
     if (todoList.length === 0) {
       checkAll.checked = false;
     }
   }
 
+  function thisPage(newPage) {
+    if (newPage !== lastPage) {
+      page = newPage;
+    } else {
+      page = Math.ceil(filterTodos().length / COUNT_OF_PAGINATION);
+    }
+  }
+
   function render() {
+    thisPage(page);
     const configuredTodos = filterTodos()
       .slice((page - 1) * COUNT_OF_PAGINATION, page * COUNT_OF_PAGINATION);
     let htmllist = '';
     configuredTodos.forEach((item) => {
       htmllist += `<li id="${item.id}">
-          <input class="checkbox" type="checkbox" ${item.isChecked ? 'checked' : ''}></input>
-          <span id=${item.id} class="firstText" >${item.text}</span>
-          <input id=${item.id} class="new-input-redact" type="text" value="${_.escape(item.text)}" hidden ></input>
-          <button type="button" class="close-button">Delete</button>
+      <input class="checkbox" type="checkbox" ${item.isChecked ? 'checked' : ''}></input>
+      <span id=${item.id} class="firstText" >${item.text}</span>
+      <input id=${item.id} class="new-input-redact" type="text" value="${_.escape(item.text)}" hidden ></input>
+      <button type="button" class="close-button">Delete</button>
       </li>`;
     });
     divTodo.innerHTML = htmllist;
+    pagination();
     updateTabsCounter();
     checkAllCheckbox();
-    pagination();
   }
 
   function changePage(event) {
     if (event.target.classList.contains('pagination-button')) {
       page = Number(event.target.id);
+      thisPage(page);
     }
     render();
   }
@@ -92,23 +104,31 @@
     render();
   };
 
+  function setCondition2() {
+    const collectionOfTabs = conditionsButn.getElementsByClassName('btn');
+    collectionOfTabs[0].classList.remove('active');
+    collectionOfTabs[1].classList.remove('active');
+    collectionOfTabs[2].classList.remove('active');
+    collectionOfTabs[0].classList.add('active');
+  }
+
   function addTask() {
-    if (inputText.value.trim() !== '') {
-      const task = {
-        id: Date.now(),
-        text: _.escape(inputText.value.trim()),
-        isChecked: false,
-      };
-      todoList.push(task);
-      page = Math.ceil(filterTodos().length / COUNT_OF_PAGINATION);
-      inputText.value = '';
-    } else {
-      inputText.value = '';
-    }
+    if (inputText.value.trim() === '') return;
+    const task = {
+      id: Date.now(),
+      text: _.escape(inputText.value.trim()),
+      isChecked: false,
+    };
+    todoList.push(task);
+    page = Math.ceil(filterTodos().length / COUNT_OF_PAGINATION);
+    inputText.value = '';
+    thisPage(page);
+    condition = 'all';
     updateTabsCounter();
     render();
     checkAllCheckbox();
     pagination();
+    setCondition2();
   }
 
   function checkDeleteTodoRewrite(event) {
@@ -138,10 +158,8 @@
     updateTabsCounter();
   }
 
-  function buttnEnter(e) {
-    const key = e.keyCode;
-    if (key === 13) {
-      e.preventDefault();
+  function buttnEnter(event) {
+    if (event.key === ENTER) {
       addTask();
     }
   }
@@ -155,8 +173,8 @@
     if (event.target.classList.contains('btn')) {
       condition = event.target.id;
       event.target.classList.add('active');
-      render();
     }
+    render();
   }
 
   const finishEdit = (event) => {

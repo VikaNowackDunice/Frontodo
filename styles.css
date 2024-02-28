@@ -14,6 +14,14 @@ body {
   transition: all 1s;
 }
 
+.input-text{
+  width: 60%;
+}
+
+.new-input-redact{
+width: 70%;
+}
+
 .close-button{
   position: absolute;
   right: 10px;
@@ -22,8 +30,8 @@ body {
   margin-top: auto;
   top: 10px;
   border-radius: 5px;
-
 } 
+
 .todo {
   position: relative;
   width: 70%;
@@ -43,34 +51,36 @@ body {
   padding:10px;
   border-radius: 10px;
 }
+
 .firstText{
   margin-left: 10px;
   margin-top: 10px;
   word-break: break-all;
   margin-right: 100px;
+  max-height: 250px;
+  overflow-y: auto ;
 }
+
 .containerEnter{
-    text-align: center;
+  text-align: center;
 }
+
 .conclusionTodo{
-    text-align: center;
+  text-align: center;
 }
 
 .pagination{
   justify-content: center;
   margin: 10px auto; 
-  max-width: 50%;
   flex-wrap: wrap;
   margin-bottom: 10px;
   row-gap: 5px;
 }
+
 .conditions{
   margin-top: 10px;
 }
+
 .active{
   background:rgb(93, 120, 141)
 }
-
-/* .active-button{
-  background : red;
-} */
