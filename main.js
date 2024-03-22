@@ -107,7 +107,7 @@
     render();
   };
 
-  async function getAllTodo() {
+  function getAllTodo() {
     const URL = 'http://localhost:5006/todos/allTodo';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
@@ -146,10 +146,10 @@
       .catch((error) => showError(error));
   }
 
-  async function updateAllTodo(allCheck) {
+  function updateAllTodo(allCheck) {
     const URL = 'http://localhost:5006/todos/updateAllTodo';
     try {
-      await fetch(URL, {
+      fetch(URL, {
         headers: { 'Content-Type': 'application/json' },
         method: 'PUT',
         body: JSON.stringify({ isChecked: allCheck }),
@@ -166,10 +166,10 @@
     }
   }
 
-  async function updateCheckTodo(todoId, todoText, isCheck) {
+  function updateCheckTodo(todoId, todoText, isCheck) {
     const URL = `http://localhost:5006/todos/updateCheckTodo/${todoId}`;
     try {
-      await fetch(URL, {
+      fetch(URL, {
         headers: { 'Content-Type': 'application/json' },
         method: 'PUT',
         body: JSON.stringify({
@@ -192,10 +192,10 @@
     }
   }
 
-  async function deleteOne(todoId) {
+  function deleteOne(todoId) {
     const URL = `http://localhost:5006/todos/deleteOne/${todoId}`;
     try {
-      await fetch(URL, {
+      fetch(URL, {
         headers: { 'Content-Type': 'application/json' },
         method: 'DELETE',
       })
@@ -214,10 +214,10 @@
     }
   }
 
-  async function deleteaAll() {
+  function deleteaAll() {
     const URL = 'http://localhost:5006/todos/deleteaAll';
     try {
-      await fetch(URL, {
+      fetch(URL, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
