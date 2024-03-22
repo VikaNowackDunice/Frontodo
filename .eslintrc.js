@@ -19,8 +19,9 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest',
+    sourceType: 'module',
   },
   rules: {
-    'no-param-reassign': 'off'
+    '@typescript-eslint/no-unsafe-member-access': 'off',
   },
 };

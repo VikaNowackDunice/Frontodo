@@ -21,6 +21,10 @@
   let countPage = 1;
   let lastPage = 1;
 
+  function showError() {
+    console.error('Error');
+  }
+
   const filterTodos = () => {
     switch (condition) {
       case 'active':
@@ -57,10 +61,8 @@
   }
 
   function checkAllCheckbox() {
-    checkAll.checked = todoList.every((item) => item.isChecked);
-    if (todoList.length === 0) {
-      checkAll.checked = false;
-    }
+    const allCheck = todoList.length > 0 && todoList.every((item) => item.isChecked);
+    checkAll.checked = allCheck;
   }
 
   function thisPage(newPage) {
@@ -85,6 +87,7 @@
       </li>`;
     });
     divTodo.innerHTML = htmllist;
+
     pagination();
     updateTabsCounter();
     checkAllCheckbox();
@@ -104,6 +107,134 @@
     render();
   };
 
+  async function getAllTodo() {
+    const URL = 'http://localhost:5006/todos/allTodo';
+    fetch(URL, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'GET',
+    })
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error(res.statusText);
+      })
+      .then((data) => {
+        todoList = data;
+        render();
+      })
+      .catch((error) => showError(error));
+  }
+  window.onload = getAllTodo();
+
+  function createTodo(task) {
+    const URL = 'http://localhost:5006/todos/createTodo';
+    fetch(URL, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify({
+        id: +task.id,
+        text: task.text,
+        isChecked: task.isChecked,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error(res.statusText);
+      })
+      .then(() => {
+        render();
+      })
+      .catch((error) => showError(error));
+  }
+
+  async function updateAllTodo(allCheck) {
+    const URL = 'http://localhost:5006/todos/updateAllTodo';
+    try {
+      await fetch(URL, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT',
+        body: JSON.stringify({ isChecked: allCheck }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            render();
+          } else {
+            throw new Error(res.statusText);
+          }
+        });
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  async function updateCheckTodo(todoId, todoText, isCheck) {
+    const URL = `http://localhost:5006/todos/updateCheckTodo/${todoId}`;
+    try {
+      await fetch(URL, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT',
+        body: JSON.stringify({
+          id: todoId,
+          text: todoText,
+          isChecked: isCheck,
+        }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            condition = 'all';
+            pagination();
+            render();
+          } else {
+            throw new Error(res.statusText);
+          }
+        });
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  async function deleteOne(todoId) {
+    const URL = `http://localhost:5006/todos/deleteOne/${todoId}`;
+    try {
+      await fetch(URL, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'DELETE',
+      })
+        .then((res) => {
+          if (res.ok) {
+            condition = 'all';
+            inputText.value = '';
+            pagination();
+            render();
+          } else {
+            throw new Error(res.statusText);
+          }
+        });
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  async function deleteaAll() {
+    const URL = 'http://localhost:5006/todos/deleteaAll';
+    try {
+      await fetch(URL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then((res) => {
+          if (res.ok) {
+            condition = 'all';
+            pagination();
+            render();
+          } else {
+            throw new Error(res.statusText);
+          }
+        });
+    } catch (error) {
+      showError(error);
+    }
+  }
+
   function setCondition2() {
     const collectionOfTabs = conditionsButn.getElementsByClassName('btn');
     collectionOfTabs[0].classList.remove('active');
@@ -113,10 +244,11 @@
   }
 
   function addTask() {
-    if (inputText.value.trim() === '') return;
+    const textInputTask = inputText.value.trim();
+    if (textInputTask === '') return;
     const task = {
-      id: Date.now(),
-      text: _.escape(inputText.value.trim()),
+      id: Math.floor(performance.now()) + Math.floor(Math.random() * 100),
+      text: _.escape(textInputTask),
       isChecked: false,
     };
     todoList.push(task);
@@ -129,33 +261,41 @@
     checkAllCheckbox();
     pagination();
     setCondition2();
+    createTodo(task);
   }
 
   function checkDeleteTodoRewrite(event) {
-    const taskId = Number(event.target.parentElement.id);// save the id of the parent element
+    const todoId = Number(event.target.parentElement.id);// save the id of the parent element
+    const todoText = event.target.parentNode.children[2].value;
+    const isCheck = event.target.checked;
 
     if (event.target.classList.contains('close-button')) { // checking that the delete button is pressed
-      todoList = todoList.filter((todo) => todo.id !== taskId);
-      render();
+      todoList = todoList.filter((todo) => todo.id !== todoId);
+
       updateTabsCounter();
+      deleteOne(todoId);
+      render();
     }
 
     if (event.target.classList.contains('checkbox')) { // check for clicking a checkbox
       todoList.forEach((item) => {
-        if (item.id === taskId) {
+        if (item.id === todoId) {
           item.isChecked = !item.isChecked;
         }
       });
-      render();
+
       updateTabsCounter();
       checkAllCheckbox();
+      updateCheckTodo(todoId, todoText, isCheck);
+      render();
     }
   }
 
   function deleteAllButton() {
     todoList = todoList.filter((todo) => !todo.isChecked);
-    render();
     updateTabsCounter();
+    deleteaAll(todoList);
+    render();
   }
 
   function buttnEnter(event) {
@@ -182,8 +322,8 @@
       let todoText = event.target.parentNode.children[2].value;
       if (todoText.trim() === '') {
         render();
-        return;
       }
+      const isCheck = event.target.checked;
       const todoId = Number(event.target.parentElement.id);
       todoText = _.escape(todoText.trim().replace(/  +/g, ' '));
 
@@ -192,6 +332,7 @@
           item.text = todoText;
         }
       });
+      updateCheckTodo(todoId, todoText, isCheck);
       render();
     }
   };
@@ -216,6 +357,14 @@
     }
   };
 
+  function changeCheck() {
+    const allCheck = this.checked;
+    // eslint-disable-next-line no-return-assign
+    todoList.forEach((item) => item.isChecked = allCheck);
+    updateAllTodo(allCheck);
+    render();
+  }
+
   divTodo.addEventListener('dblclick', startEdit);
   divTodo.addEventListener('keyup', editOrExit);
   divTodo.addEventListener('blur', finishEdit, true);
@@ -226,4 +375,5 @@
   deleteAllButtonBig.addEventListener('click', deleteAllButton);
   conditionsButn.addEventListener('click', setCondition);
   pagePagination.addEventListener('click', changePage);
+  checkAll.addEventListener('change', changeCheck);
 })();
