@@ -9,11 +9,12 @@
   const completedButton = document.querySelector('.completed-button');
   const pagePagination = document.querySelector('.pagination');
   const conditionsButn = document.querySelector('.conditions');
-
+  const errorWindow = document.querySelector('#error-window');
   const { _ } = window;
   const ENTER = 'Enter';
   const ESCAPE = 'Escape';
   const COUNT_OF_PAGINATION = 5;
+  const TIME_SET = 5000;
 
   let condition = 'all';
   let page = 1;
@@ -21,8 +22,10 @@
   let countPage = 1;
   let lastPage = 1;
 
-  function showError() {
-    console.error('Error');
+  function showError(errorText) {
+    errorWindow.innerText = errorText;
+    errorWindow.show();
+    setTimeout(() => errorWindow.closest(), TIME_SET);
   }
 
   const filterTodos = () => {
@@ -148,91 +151,79 @@
 
   function updateAllTodo(allCheck) {
     const URL = 'http://localhost:5006/todos/updateAllTodo';
-    try {
-      fetch(URL, {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'PUT',
-        body: JSON.stringify({ isChecked: allCheck }),
+    fetch(URL, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT',
+      body: JSON.stringify({ isChecked: allCheck }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          render();
+        } else {
+          throw new Error(res.statusText);
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            render();
-          } else {
-            throw new Error(res.statusText);
-          }
-        });
-    } catch (error) {
-      showError(error);
-    }
+      .catch((error) => showError(error));
   }
 
   function updateCheckTodo(todoId, todoText, isCheck) {
     const URL = `http://localhost:5006/todos/updateCheckTodo/${todoId}`;
-    try {
-      fetch(URL, {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'PUT',
-        body: JSON.stringify({
-          id: todoId,
-          text: todoText,
-          isChecked: isCheck,
-        }),
+    fetch(URL, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT',
+      body: JSON.stringify({
+        id: todoId,
+        text: todoText,
+        isChecked: isCheck,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          condition = 'all';
+          pagination();
+          render();
+        } else {
+          throw new Error(res.statusText);
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            condition = 'all';
-            pagination();
-            render();
-          } else {
-            throw new Error(res.statusText);
-          }
-        });
-    } catch (error) {
-      showError(error);
-    }
+      .catch((error) => showError(error));
   }
 
   function deleteOne(todoId) {
     const URL = `http://localhost:5006/todos/deleteOne/${todoId}`;
-    try {
-      fetch(URL, {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'DELETE',
+    fetch(URL, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.ok) {
+          condition = 'all';
+          inputText.value = '';
+          pagination();
+          render();
+        } else {
+          throw new Error(res.statusText);
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            condition = 'all';
-            inputText.value = '';
-            pagination();
-            render();
-          } else {
-            throw new Error(res.statusText);
-          }
-        });
-    } catch (error) {
-      showError(error);
-    }
+      .catch((error) => showError(error));
   }
 
   function deleteaAll() {
     const URL = 'http://localhost:5006/todos/deleteaAll';
-    try {
-      fetch(URL, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+    fetch(URL, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        if (res.ok) {
+          condition = 'all';
+          pagination();
+          render();
+        } else {
+          throw new Error(res.statusText);
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            condition = 'all';
-            pagination();
-            render();
-          } else {
-            throw new Error(res.statusText);
-          }
-        });
-    } catch (error) {
-      showError(error);
-    }
+      .catch((error) => showError(error));
   }
 
   function setCondition2() {
