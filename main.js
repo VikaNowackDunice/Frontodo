@@ -111,7 +111,7 @@
   };
 
   function getAllTodo() {
-    const URL = 'http://localhost:5006/todos/allTodo';
+    const URL = 'http://localhost:5006/todos';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'GET',
@@ -129,7 +129,7 @@
   window.onload = getAllTodo();
 
   function createTodo(task) {
-    const URL = 'http://localhost:5006/todos/createTodo';
+    const URL = 'http://localhost:5006/todos/create';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
@@ -150,7 +150,7 @@
   }
 
   function updateAllTodo(allCheck) {
-    const URL = 'http://localhost:5006/todos/updateAllTodo';
+    const URL = 'http://localhost:5006/todos/update';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
@@ -167,7 +167,7 @@
   }
 
   function updateCheckTodo(todoId, todoText, isCheck) {
-    const URL = `http://localhost:5006/todos/updateCheckTodo/${todoId}`;
+    const URL = `http://localhost:5006/todos/update/${todoId}`;
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
@@ -190,7 +190,7 @@
   }
 
   function deleteOne(todoId) {
-    const URL = `http://localhost:5006/todos/deleteOne/${todoId}`;
+    const URL = `http://localhost:5006/todos/${todoId}`;
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'DELETE',
@@ -209,7 +209,7 @@
   }
 
   function deleteaAll() {
-    const URL = 'http://localhost:5006/todos/deleteaAll';
+    const URL = 'http://localhost:5006/todos';
     fetch(URL, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
