@@ -150,7 +150,7 @@
   }
 
   function updateAllTodo(allCheck) {
-    const URL = 'http://localhost:5003/todos/update';
+    const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
@@ -167,7 +167,7 @@
   }
 
   function updateCheckTodo(todoId, todoText, isCheck) {
-    const URL = `http://localhost:5003/todos/update/${todoId}`;
+    const URL = `http://localhost:5003/todos/${todoId}`;
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
@@ -208,7 +208,7 @@
       .catch((error) => showError(error));
   }
 
-  function deleteaAll() {
+  function deleteCheckedTodo() {
     const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       method: 'DELETE',
@@ -285,7 +285,7 @@
   function deleteAllButton() {
     todoList = todoList.filter((todo) => !todo.isChecked);
     updateTabsCounter();
-    deleteaAll(todoList);
+    deleteCheckedTodo(todoList);
     render();
   }
 
