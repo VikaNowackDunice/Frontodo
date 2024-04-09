@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../my-nest-project"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "testvs"
+	}
+}

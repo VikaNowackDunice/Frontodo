@@ -21,6 +21,7 @@
   let todoList = [];
   let countPage = 1;
   let lastPage = 1;
+  const URL = 'https://api.t4.academy.dunice-testing.com/todos';
 
   function showError(errorText) {
     errorWindow.innerText = errorText;
@@ -85,7 +86,7 @@
       htmllist += `<li id="${item.id}">
       <input class="checkbox" type="checkbox" ${item.isChecked ? 'checked' : ''}></input>
       <span id=${item.id} class="firstText" >${item.text}</span>
-      <input id=${item.id} class="new-input-redact" type="text" value="${_.escape(item.text)}" hidden ></input>
+      <input id=${item.id} class="new-input-redact" type="text" value="${item.text.replace(/"/g, '\\"')}" hidden ></input>
       <button type="button" class="close-button">Delete</button>
       </li>`;
     });
@@ -94,6 +95,7 @@
     pagination();
     updateTabsCounter();
     checkAllCheckbox();
+    backlightButton();
   }
 
   function changePage(event) {
@@ -111,7 +113,6 @@
   };
 
   function getAllTodo() {
-    const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'GET',
@@ -129,7 +130,6 @@
   window.onload = getAllTodo();
 
   function createTodo(task) {
-    const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
@@ -150,7 +150,6 @@
   }
 
   function updateAllTodo(allCheck) {
-    const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
@@ -167,8 +166,7 @@
   }
 
   function updateCheckTodo(todoId, todoText, isCheck) {
-    const URL = `http://localhost:5003/todos/${todoId}`;
-    fetch(URL, {
+    fetch(`${URL}/${todoId}`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'PUT',
       body: JSON.stringify({
@@ -190,8 +188,7 @@
   }
 
   function deleteOne(todoId) {
-    const URL = `http://localhost:5003/todos/${todoId}`;
-    fetch(URL, {
+    fetch(`${URL}/${todoId}`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'DELETE',
     })
@@ -209,7 +206,6 @@
   }
 
   function deleteCheckedTodo() {
-    const URL = 'http://localhost:5003/todos';
     fetch(URL, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -226,12 +222,35 @@
       .catch((error) => showError(error));
   }
 
-  function setCondition2() {
-    const collectionOfTabs = conditionsButn.getElementsByClassName('btn');
+  function setCondition(event) {
+    const collectionOfTabs = conditionsButn.children;
+
     collectionOfTabs[0].classList.remove('active');
     collectionOfTabs[1].classList.remove('active');
     collectionOfTabs[2].classList.remove('active');
-    collectionOfTabs[0].classList.add('active');
+
+    if (event.target.classList.contains('btn')) {
+      condition = event.target.id;
+    }
+    render();
+  }
+
+  function backlightButton() {
+    const collectionOfTabs = conditionsButn.children;
+    collectionOfTabs[0].classList.remove('active');
+    collectionOfTabs[1].classList.remove('active');
+    collectionOfTabs[2].classList.remove('active');
+
+    switch (condition) {
+      case 'active':
+        collectionOfTabs[1].classList.add('active');
+        break;
+      case 'completed':
+        collectionOfTabs[2].classList.add('active');
+        break;
+      default:
+        collectionOfTabs[0].classList.add('active');
+    }
   }
 
   function addTask() {
@@ -242,16 +261,16 @@
       text: _.escape(textInputTask),
       isChecked: false,
     };
+    condition = 'all';
+
     todoList.push(task);
     page = Math.ceil(filterTodos().length / COUNT_OF_PAGINATION);
     inputText.value = '';
-    thisPage(page);
-    condition = 'all';
     updateTabsCounter();
     render();
     checkAllCheckbox();
     pagination();
-    setCondition2();
+    thisPage(page);
     createTodo(task);
   }
 
@@ -274,7 +293,6 @@
           item.isChecked = !item.isChecked;
         }
       });
-
       updateTabsCounter();
       checkAllCheckbox();
       updateCheckTodo(todoId, todoText, isCheck);
@@ -293,19 +311,6 @@
     if (event.key === ENTER) {
       addTask();
     }
-  }
-
-  function setCondition(event) {
-    const collectionOfTabs = conditionsButn.getElementsByClassName('btn');
-    collectionOfTabs[0].classList.remove('active');
-    collectionOfTabs[1].classList.remove('active');
-    collectionOfTabs[2].classList.remove('active');
-
-    if (event.target.classList.contains('btn')) {
-      condition = event.target.id;
-      event.target.classList.add('active');
-    }
-    render();
   }
 
   const finishEdit = (event) => {
